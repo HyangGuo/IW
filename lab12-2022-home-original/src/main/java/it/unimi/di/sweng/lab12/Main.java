@@ -1,0 +1,69 @@
+package it.unimi.di.sweng.lab12;
+
+
+import it.unimi.di.sweng.lab12.model.GroceryListModel;
+import it.unimi.di.sweng.lab12.presenter.CommandPresenter;
+import it.unimi.di.sweng.lab12.presenter.DisplayPresenter;
+import it.unimi.di.sweng.lab12.presenter.PresenterInput;
+import it.unimi.di.sweng.lab12.view.CommandView;
+import it.unimi.di.sweng.lab12.view.DisplayView;
+import it.unimi.di.sweng.lab12.view.InputView;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+  //TODO da completare
+
+  public static final int MAX_FOOD = 8;
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage primaryStage) {
+
+    primaryStage.setTitle("Grocery List");
+
+    CommandView[] command = new CommandView[2];
+
+    InputView input = new InputView();
+    DisplayView display = new DisplayView(MAX_FOOD, "Cose da comprare");
+    DisplayView display2 = new DisplayView(MAX_FOOD, "Cose comprate");
+
+    GridPane gridPane = new GridPane();
+    gridPane.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+    gridPane.setPadding(new Insets(10, 10, 10, 10));
+
+    gridPane.add(input, 0, 0);
+    GridPane.setColumnSpan(input, GridPane.REMAINING);
+    for (int i = 0; i < 2; i++) {
+      command[i] = new CommandView("Buy", MAX_FOOD, "Compratore#" + i);
+      gridPane.add(command[i], i, 1);
+    }
+
+    gridPane.add(display, 0, 2);
+    gridPane.add(display2, 1, 2);
+
+    // TODO da completare creandp modello e presenter e collegandoli opportunamente
+    GroceryListModel model = new GroceryListModel();
+    CommandPresenter commandPresenter = new CommandPresenter(model,command[0],command[1],MAX_FOOD);
+    DisplayPresenter displayPresenter = new DisplayPresenter(model,display,display2,MAX_FOOD);
+    PresenterInput presenterInput = new PresenterInput(model,input,MAX_FOOD);
+
+
+    Scene scene = new Scene(gridPane);
+    primaryStage.setScene(scene);
+    primaryStage.show();
+
+    //HINT: utile dopo aver definito model per inizializzare viste
+    model.notifyObservers();
+  }
+}
